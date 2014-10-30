@@ -418,7 +418,7 @@ TODO: reimplement with proper resource handling."
                        (if (.hasNext results)
                          (let [current-result (try
                                                 (converter-f (.next results))
-                                                (catch Exception e
+                                                (finally
                                                   (.close results)))]
                            (lazy-cat
                             [current-result]
