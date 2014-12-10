@@ -108,6 +108,19 @@ Supported options are currently:
   (fn [file & {:keys [ext]}]
     (or ext (extension file))))
 
+(defmulti write-tabular-file!
+  "Takes a Dataset and a filename and writes the contents out as a table
+with the column names in the first row and. The type of file written depends
+upon the extension provided in the filename.
+
+Supported options are currently:
+
+:ext - To specify the file type or override that which would otherwise be
+       guessed from the extension."
+
+  (fn [dataset file & {:keys [ext]}]
+    (or ext (extension file))))
+
 (def datasetable? #{:csv})
 
 (def dataset-holder-extensions

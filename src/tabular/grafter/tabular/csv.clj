@@ -8,21 +8,11 @@
   [f & {:as opts}]
   (tab/mapply csv/parse-csv (io/reader f) opts))
 
-(comment
-
-  ;; taken from Hampshire pivot-tool.  TODO consider rewriting in a
-  ;; generic way.
-  ;;
-  ;; Do we want make-parents functionality built in?
-  ;;
-  ;; We probably want a serialize method that serialises anything to
-  ;; the appropriate file type based on file extension/mime-type.
-
-  (defn write-output-file! [file data]
-
-    (io/make-parents file)
-
-    (with-open [^java.io.BufferedWriter w (io/writer file)]
-      (doseq [row data]
-        (let [^String s (write-csv [row])]
-          (.write w s))))))
+(defmethod tab/write-tabular-file! :csv
+  [dataset filename]
+  (with-open [^java.io.BufferedWriter w (io/writer filename)]
+    (let [^String header-string (csv/write-csv [(map name (tab/column-names dataset))])]
+      (.write w header-string))
+    (doseq [row (:rows dataset)]
+      (let [^String row-string (csv/write-csv [(vals row)])]
+          (.write w row-string)))))

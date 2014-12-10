@@ -16,6 +16,7 @@
   move-first-row-to-header
   open-tabular-file
   open-all-datasets
+  write-tabular-file!
   with-metadata-columns
   without-metadata-columns])
 
