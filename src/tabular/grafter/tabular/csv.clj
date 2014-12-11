@@ -11,8 +11,10 @@
 (defmethod tab/write-tabular-file! :csv
   [dataset filename]
   (with-open [^java.io.BufferedWriter w (io/writer filename)]
-    (let [^String header-string (csv/write-csv [(map name (tab/column-names dataset))])]
-      (.write w header-string))
-    (doseq [row (:rows dataset)]
-      (let [^String row-string (csv/write-csv [(vals row)])]
-          (.write w row-string)))))
+    (let [header-names (map name (tab/column-names dataset))]
+      (let [^String header-csv (csv/write-csv [header-names])]
+        (.write w header-csv))
+      (doseq [row (:rows dataset)]
+        (let [row-strings (map (fn[col] (str (get row col))) header-names)
+              ^String row-csv (csv/write-csv [row-strings])]
+          (.write w row-csv))))))
