@@ -65,41 +65,51 @@
 
 (def excel-sheet (make-dataset raw-excel-data move-first-row-to-header))
 
-(deftest open-tabular-file-tests
-  (testing "open-tabular-file"
-    (testing "Opens CSV files"
-      (let [loaded-csv (open-tabular-file "./test/grafter/test.csv")]
-        (testing "are a seq of seqs"
-          (is (= raw-csv-data loaded-csv)))))
+(defn is-a-dataset? [thing]
+  (is (instance? incanter.core.Dataset thing)))
 
-    (testing "Opens CSV files with txt extensions"
-      (let [loaded-txt (open-tabular-file "./test/grafter/test.txt" :ext :csv)]
-        (testing "are a seq of seqs"
-          (is (= raw-txt-data loaded-txt)))))
+(deftest open-dataset-tests
+  (testing "Open an existing Dataset"
+    (let [dataset (open-dataset (make-dataset raw-csv-data))]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset))))
 
-    (testing "Opens Excel files"
-      (let [loaded-excel (open-tabular-file "./test/grafter/test.xlsx")]
-        (testing "are incanter.core.Dataset records"
-          (is (instance? org.apache.poi.xssf.usermodel.XSSFWorkbook loaded-excel)))))))
+  (testing "Open CSV file"
+    (let [dataset (open-dataset "./test/grafter/test.csv")]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset))))
 
-(deftest open-all-datasets-tests
-  (testing "open-all-datasets"
-    (let [sheets (open-all-datasets "./test/grafter" :make-dataset-fn #(make-dataset % move-first-row-to-header))]
+  (testing "Open text file"
+    (let [dataset (open-dataset "./test/grafter/test.txt" :format :csv)]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset))))
 
-      (is (seq? sheets) "should yield a seq")
-      (is (= 2 (count sheets)) "should be 2 datasets")
+  (testing "Open XLS file"
+    (let [dataset (open-dataset "./test/grafter/test.xls")]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset))))
 
-      (let [read-data     (set sheets)
-            expected-data (set [csv-sheet excel-sheet])]
-        (is (= read-data expected-data))))
+  (testing "Open XLSX file"
+    (let [dataset (open-dataset "./test/grafter/test.xlsx")]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset))))
 
-    (testing "with-metadata-columns"
-      (let [[csv-dataset] (open-all-datasets "./test/grafter/test.csv" :metadata-fn with-metadata-columns)]
-        (is (= (inc/$ 0 :file csv-dataset) "test.csv")
-            "Should contain file name")
+  (testing "Open the second sheet of an XLS file"
+    (let [dataset (open-dataset "./test/grafter/test.xls" :sheet "Sheet2")]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset))))
 
-        (is (re-find #"/test/grafter" (inc/$ 0 :path csv-dataset))
-            "Should contain file path")))))
+  (testing "Open the second sheet of an XLSX file"
+    (let [dataset (open-dataset "./test/grafter/test.xlsx" :sheet "Sheet2")]
+      (testing "returns a dataset"
+        (is-a-dataset? dataset)))))
+
+(deftest open-datasets-tests
+  (testing "Open XLS file"
+    (let [datasets (open-datasets "./test/grafter/test.xls")]
+      (testing "returns a hashmap of sheet-names to datasets"
+        (is (every? is-a-dataset? (vals datasets)))
+        (is (= (keys datasets) '("Sheet1" "Sheet2")))))))
 
 (deftest make-dataset-tests
   (let [dataset (make-dataset csv-sheet)]

@@ -4,9 +4,10 @@
             [clojure.java.io :as io]
             [grafter.tabular.common :as tab]))
 
-(defmethod tab/open-tabular-file :csv
+(defmethod tab/open-dataset :csv
   [f & {:as opts}]
-  (tab/mapply csv/parse-csv (io/reader f) opts))
+  (let [csv-seq      (tab/mapply csv/parse-csv (io/reader f) opts)]
+    (tab/make-dataset csv-seq)))
 
 (comment
 
