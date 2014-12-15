@@ -109,6 +109,12 @@
     (let [datasets (open-datasets "./test/grafter/test.xls")]
       (testing "returns a hashmap of sheet-names to datasets"
         (is (every? is-a-dataset? (vals datasets)))
+        (is (= (keys datasets) '("Sheet1" "Sheet2"))))))
+
+  (testing "Open XLSX file"
+    (let [datasets (open-datasets "./test/grafter/test.xlsx")]
+      (testing "returns a hashmap of sheet-names to datasets"
+        (is (every? is-a-dataset? (vals datasets)))
         (is (= (keys datasets) '("Sheet1" "Sheet2")))))))
 
 (deftest make-dataset-tests

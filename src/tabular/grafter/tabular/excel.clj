@@ -27,6 +27,13 @@
 (defmethod tab/open-datasets :xls
   [filename & opts]
   (-> filename
+      xls/workbook-hssf
+      xls/lazy-workbook
+      (#(zipmap (keys %1) (map tab/make-dataset (vals %1))))))
+
+(defmethod tab/open-datasets :xlsx
+  [filename & opts]
+  (-> filename
       xls/workbook-xssf
       xls/lazy-workbook
       (#(zipmap (keys %1) (map tab/make-dataset (vals %1))))))
