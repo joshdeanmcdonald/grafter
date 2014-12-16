@@ -102,6 +102,11 @@
   (testing "Open the second sheet of an XLSX file"
     (let [dataset (open-dataset "./test/grafter/test.xlsx" :sheet "Sheet2")]
       (testing "returns a dataset"
+        (is-a-dataset? dataset))))
+
+  (testing "Open java.io.File"
+    (let [dataset (open-dataset (clojure.java.io/file "./test/grafter/test.xls"))]
+      (testing "returns a dataset"
         (is-a-dataset? dataset)))))
 
 (deftest open-datasets-tests
@@ -113,6 +118,12 @@
 
   (testing "Open XLSX file"
     (let [datasets (open-datasets "./test/grafter/test.xlsx")]
+      (testing "returns a hashmap of sheet-names to datasets"
+        (is (every? is-a-dataset? (vals datasets)))
+        (is (= (keys datasets) '("Sheet1" "Sheet2"))))))
+
+  (testing "Open java.io.File"
+    (let [datasets (open-datasets (clojure.java.io/file "./test/grafter/test.xls"))]
       (testing "returns a hashmap of sheet-names to datasets"
         (is (every? is-a-dataset? (vals datasets)))
         (is (= (keys datasets) '("Sheet1" "Sheet2")))))))

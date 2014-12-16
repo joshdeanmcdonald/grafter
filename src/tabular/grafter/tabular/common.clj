@@ -96,7 +96,7 @@ Options are:
 
   (fn [datasetable & {:keys [format]}]
     (or format
-        (if (instance? String datasetable)
+        (if (not (nil? (#{ String java.io.File } (class datasetable))))
           (extension datasetable)
           (class datasetable)))))
 
@@ -104,12 +104,20 @@ Options are:
   [dataset]
   dataset)
 
+(comment
+  (defmethod open-dataset ::default
+    [dataset & {:keys [format]}]
+    (if (nil? format)
+      (throw (IllegalArgumentException. (str "Please specify a format, it could not be infered when opening a dataset of type: " (class dataset))))
+      (let [rdr (clojure.java.io/reader dataset)]
+        (open-dataset rdr :format format)))))
+
 (defmulti open-datasets
   "Opens a lazy sequence of datasets from a something that returns multiple
 datasetables - i.e. all the worksheets in an Excel workbook."
   (fn [multidatasetable & {:keys [format]}]
     (or format
-        (if (instance? String multidatasetable)
+        (if (not (nil? (#{ String java.io.File } (class multidatasetable))))
           (extension multidatasetable)
           (class multidatasetable)))))
 
