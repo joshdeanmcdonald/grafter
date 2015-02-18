@@ -5,7 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-v10.html"}
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.openrdf.sesame/sesame-runtime "2.7.14"]
+                 [org.openrdf.sesame/sesame-runtime "2.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.clojure/data.csv "0.1.2"]
                  [com.outpace/clj-excel "0.0.6" :exclusions [commons-codec]]
