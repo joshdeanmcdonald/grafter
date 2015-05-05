@@ -8,7 +8,7 @@
 
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.openrdf.sesame/sesame-runtime "2.7.14"
+                 [org.openrdf.sesame/sesame-runtime "2.7.15"
                   :exclusions [org.openrdf.sesame/sesame-repository-manager]]
                  [org.clojure/tools.logging "0.3.1"]
 
